@@ -1,15 +1,14 @@
 package Algorithm::LUHN;
-
+$Algorithm::LUHN::VERSION = '1.01';
+use 5.006;
 use strict;
+use warnings;
 use Exporter;
 
-use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK $ERROR/;
-
-@ISA       = qw/Exporter/;
-@EXPORT    = qw//;
-@EXPORT_OK = qw/check_digit is_valid valid_chars/;
-
-$VERSION = '1.00';
+our @ISA       = qw/Exporter/;
+our @EXPORT    = qw//;
+our @EXPORT_OK = qw/check_digit is_valid valid_chars/;
+our $ERROR;
 
 # The hash of valid characters.
 my %map = map { $_ => $_ } 0..9;
@@ -56,7 +55,10 @@ You can find plenty of information about the algorithm by searching the web for
 
 =item is_valid CHECKSUMMED_NUM
 
-This function returns true if the final character of CHECKSUMMED_NUM is the
+This function takes a credit-card number and returns true if
+the number passes the LUHN check.
+
+Ie it returns true if the final character of CHECKSUMMED_NUM is the
 correct checksum for the rest of the number and false if not. Obviously the
 final character does not factor into the checksum calculation. False will also
 be returned if NUM contains in an invalid character as defined by
@@ -67,7 +69,16 @@ This function is equivalent to
 
   substr $N,length($N)-1 eq check_digit(substr $N,0,length($N)-1)
 
+For example, C<4242 4242 4242 4242> is a valid Visa card number,
+that is provided for test purposes. The final digit is '2',
+which is the right check digit. If you change it to a '3', it's not
+a valid card number. Ie:
+
+    is_valid('4242424242424242');   # true
+    is_valid('4242424242424243');   # false
+
 =cut
+
 sub is_valid {
   my $N = shift;
   my $c = check_digit(substr($N, 0,length($N)-1));
@@ -153,6 +164,33 @@ sub _dump_map {
 1;
 
 __END__
+
+=head1 SEE ALSO
+
+L<Algorithm::CheckDigits> provides a front-end to a large collection
+of modules for working with check digits.
+
+L<Business::CreditCard> provides three functions for checking credit
+card numbers. L<Business::CreditCard::Object> provides an OO interface
+to those functions.
+
+L<Business::CardInfo> provides a class for holding credit card details,
+and has a type constraint on the card number, to ensure it passes the
+LUHN check.
+
+L<Business::CCCheck> provides a number of functions for checking
+credit card numbers.
+
+L<Regexp::Common> supports combined LUHN and issuer checking
+against a card number.
+
+I have also written a
+L<review of LUHN modules|http://neilb.org/reviews/luhn.html>,
+which covers them in more detail than this section.
+
+=head1 REPOSITORY
+
+L<https://github.com/neilbowers/Algorithm-LUHN>
 
 =head1 AUTHOR
 
